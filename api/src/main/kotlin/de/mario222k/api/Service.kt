@@ -7,7 +7,7 @@ import retrofit2.http.Query
 
 interface Service {
     @GET("shows")
-    fun getShows(@Query("page") page: Int): Call<List<Show>>
+    fun getShows(@Query("page") page: Int = 1): Call<List<Show>>
 
     @GET("shows/{id}")
     fun getShow(@Path("id") id: Long): Call<Show>
