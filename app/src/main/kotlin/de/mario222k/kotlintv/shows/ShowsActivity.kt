@@ -1,23 +1,29 @@
 package de.mario222k.kotlintv.shows
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import de.mario222k.api.Api
-import de.mario222k.api.model.Show
 import de.mario222k.kotlintv.R
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.show_activity.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
-class ShowsActivity : AppCompatActivity() {
+class ShowsActivity : AppCompatActivity(), ShowAdapter.ShowAdapterDelegate{
+    override fun endReached() {
+        if(isLoading) {
+            return
+        }
+        loadPage(2)
+    }
 
-    val api = Api.instance.service
+    val api = Api.instance
+    private var isLoading = false
+
+    private val showAdapter : ShowAdapter by lazy { ShowAdapter(this).apply{
+        delegate = this@ShowsActivity
+    } }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,16 +31,17 @@ class ShowsActivity : AppCompatActivity() {
         setContentView(R.layout.show_activity)
         setSupportActionBar(toolbar)
 
-        // TODO #1 add recycler view
-        // TODO #2 config recycler view
-        // TODO #3 add recycler view adapter
-        // TODO #4 create and bind item layout
+        list.apply {
+            layoutManager = LinearLayoutManager(this@ShowsActivity)
+            adapter = showAdapter
+        }
+
         // TODO #5 support paging
 
         // TODO #6 add new activity for episode list (nearly the same as this activity / adapter)
         // TODO #7 add new activity for episode details
 
-        refresh()
+        loadPage()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -49,7 +56,7 @@ class ShowsActivity : AppCompatActivity() {
         // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
             R.id.action_refresh -> {
-                refresh()
+                loadPage()
                 return true
             }
         }
@@ -57,28 +64,21 @@ class ShowsActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun refresh() {
+    private fun loadPage( page: Int = 1 ) {
         // TODO show loading indicator
-
         Observable.create<Boolean> {
             it.onNext(true)
 
-            api.getShows().enqueue(object : Callback<List<Show>> {
-                override fun onResponse(p0: Call<List<Show>>?, p1: Response<List<Show>>?) {
-                    Snackbar.make(root, "loaded shows: ${p1?.body()?.size ?: -1}", Snackbar.LENGTH_SHORT).show()
-                    it.onNext(false)
-                    it.onComplete()
-
-                    // TODO add items to adapter
-                }
-
-                override fun onFailure(p0: Call<List<Show>>?, p1: Throwable?) {
-                    Snackbar.make(root, "error: ${p1?.message}", Snackbar.LENGTH_SHORT).show()
-                    it.onNext(false)
-                    it.onComplete()
-                }
-
+            api.getShows(page).subscribe({ shows ->
+                showAdapter.shows = shows
+                it.onNext(false)
+                it.onComplete()
+            }, { _ ->
+                it.onNext(false)
+                it.onComplete()
             })
-        }.subscribe({ isLoading -> Toast.makeText(this@ShowsActivity, "isLoading: $isLoading", Toast.LENGTH_SHORT).show() })
+
+        }.subscribe { isLoading = it }
     }
 }
+
