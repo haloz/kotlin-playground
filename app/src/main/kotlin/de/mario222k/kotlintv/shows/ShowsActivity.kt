@@ -1,4 +1,4 @@
-package de.mario222k.kotlintv
+package de.mario222k.kotlintv.shows
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -7,9 +7,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import de.mario222k.api.Api
-import de.mario222k.api.Show
+import de.mario222k.api.model.Show
+import de.mario222k.kotlintv.R
 import io.reactivex.Observable
-import kotlinx.android.synthetic.main.activity_shows.*
+import kotlinx.android.synthetic.main.show_activity.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -21,13 +22,17 @@ class ShowsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_shows)
+        setContentView(R.layout.show_activity)
         setSupportActionBar(toolbar)
 
-        // TODO (opt #1) add new activity for episode list
-        // TODO (opt #2) add new activity for episode details
-        // TODO write recycler view adapter
-        // TODO config recycler view
+        // TODO #1 add recycler view
+        // TODO #2 config recycler view
+        // TODO #3 add recycler view adapter
+        // TODO #4 create and bind item layout
+        // TODO #5 support paging
+
+        // TODO #6 add new activity for episode list (nearly the same as this activity / adapter)
+        // TODO #7 add new activity for episode details
 
         refresh()
     }

@@ -1,5 +1,7 @@
-package de.mario222k.api
+package de.mario222k.api.service
 
+import de.mario222k.api.model.Episode
+import de.mario222k.api.model.Show
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path

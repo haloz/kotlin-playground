@@ -1,4 +1,4 @@
-package de.mario222k.api
+package de.mario222k.api.model
 
 data class Show(
         val id: Long,
@@ -26,10 +26,8 @@ data class Episode(
 
 data class Schedule(
         val time: String,
-        val days: List<String>
-)
+        val days: List<String>)
 
 data class Image(
         val original: String?,
-        val medium: String?
-)
+        val medium: String?)
